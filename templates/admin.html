@@ -1,0 +1,59 @@
+{%extends 'base.html'%}   
+{%block context%}
+        {% for user in all_users %}
+          {% if loop.index0 % 6 == 0 %}
+              <div class="row">
+          {% endif %}
+       
+          <div class="col-sm-2 mt-5">
+              <div style="background-color: #333; color: white;" class="card justify-content-center align-items-center">
+                  <img style="width: 200px; height: 157px; padding-top: 10px; " src='/static/pimages/{{user.id}}.png' class="card-img-top rounded-circle w-50">
+                  <div class="card-body">
+                      <h5 class="card-title">User {{user.name}}</h5>
+                  </div>
+                  <ul style="background-color: #333; color: white;" class="list-group list-group-flush">
+                      <li style="background-color: #333; color: white; border: 1px solid #2f2f2f;" class="list-group-item">{{user.email}}</li>
+                      <li style="background-color: #333; color: white; border: 1px solid #2f2f2f;" class="list-group-item">{{user.role}}</li>
+                      <b>
+                      {%if user.status%}
+                        <li style="background-color: #333; color: lime; border: 1px solid #2f2f2f; border: 1px solid #2f2f2f;" class="list-group-item">Online</li>
+                      {%else%}
+                        <li style="background-color: #333; color: rgb(45, 90, 174); border: 1px solid #2f2f2f; border: 1px solid #2f2f2f;" class="list-group-item">Offline</li>
+                      {%endif%}
+                      </b>
+                      <b>
+                        <form method="post">
+                          <ul class="list-group">
+                              
+                              <button name="Action" value="message" style="background-color: #333; color: lime; font-weight: bold; border: 1px solid #2f2f2f;" class="list-group-item">Send message</button>
+                          </ul>
+                          <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+                      </form>
+                      
+                      </b>
+                      <b>
+                        <form method="post">
+                          <ul class="list-group">
+                              {% if user.ban_state == 0 %}
+                              <button name="Action" value="{{user.id}}" style="background-color: #333; color: lime; font-weight: bold; border: 1px solid #2f2f2f;" class="list-group-item">Not Banned</button>
+                              {% else %}
+                              <button name="Action" value="{{user.id}}" style="background-color: #333; color: orange; font-weight: bold; border: 1px solid #2f2f2f;" class="list-group-item">Banned</button>
+                              {% endif %}
+                          </ul>
+                          <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+                      </form>
+                      
+                      </b>
+                  </ul>
+              </div>
+          </div>
+        
+          {% if loop.index0 % 6 == 5 or loop.last %}
+              </div>
+          {% endif %}
+        {% endfor %}
+  
+  
+  
+      
+{%endblock%}

@@ -1,0 +1,66 @@
+{%extends 'base.html'%}   
+{%block context%}
+<br>
+<br>
+    <div class="container-fluid d-flex justify-content-center align-items-center mt-5 text-white" >
+        <div class="card bg-dark" style="width: 30rem; color: #ccc;">
+            <div class="card-body">
+                <h3 class="card-title">Sign Up</h3>
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="name" class="form-control-label">Username</label>
+                        <input type="text" autocomplete="username" id="username" name="username" placeholder="Pick a distinct username" class="form-control" value="{{ name|default('') }}" required>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="handle" class="form-control-label">Handle</label>
+                        <input type="handle" autocomplete="handle" id="handle" name="handle" placeholder="Pick a good handle, for example @cooluser" class="form-control" value="{{ handle|default('') }}" required>
+                    </div>
+                    {%if error == "Handle already exists. Please choose a different one."%}
+                        <div style="color: #ff000f;">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+                    <br>
+                    <div class="form-group">
+                        <label for="email" class="form-control-label">Email</label>
+                        <input type="email" id="email" autocomplete="email" name="email" placeholder="Use your e-mail address" class="form-control" value="{{ email|default('') }}" required>
+                    </div>
+                    {%if error == "Email already exists. Please choose a different one."%}
+                        <div style="color: #ff000f;">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+                    <br>
+                    <div class="form-group">
+                        <label for="password" class="form-control-label">Password</label>
+                        <input type="password" autocomplete="new-password" id="password1" placeholder="Write a memorable password" name="password1" class="form-control" required>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="password2" class="form-control-label">Confirm Password</label>
+                        <input type="password" autocomplete="new-password" id="password2" placeholder="Rewrite that memorable password" name="password2" class="form-control" required>
+                    </div>
+                    {%if error == "Passwords do not match. Please try again."%}
+                        <div style="color: #ff000f;">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+                    <br>
+                    <p>
+                        By signing up to furtu.be you automatically agree to this site's <a href="/terms-of-service">terms of service</a>.
+                    </p>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-light" style="width: 100%;">Sign Up</button>
+                    </div>
+                    
+                </form>
+        
+            </div>
+        </div>
+    </div>
+
+<p style="text-align: center;">Have an account? Log In <a href="/login">Here</a> !</p>
+    </div>
+{%endblock%}
+

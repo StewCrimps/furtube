@@ -1,0 +1,31 @@
+{%extends 'base.html'%}
+{%block context%}
+<br>
+<br>
+<br>
+<div class="center-row">
+    
+    <div class="col-md-3" >
+        <h3>Watch History:</h3>
+        
+
+        <a href="/watch/#" class="d-block text-decoration-none text-reset">
+            <div class="card mb-3">
+                <div class="row g-0 align-items-center">
+                    <div class="col-5">
+                        <div class="ratio ratio-16x9">
+                            <img src="/static/images/preset_thumpnail.png" style="object-fit: cover; border-radius: 8px;">
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <div class="card-body py-0">
+                            <h5 class="card-title mb-1" style="font-size: 16px;">Title of the intresting video..</h5>
+                            <small class="text-body-light">100 Views • 1 Hour ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{%endblock%}

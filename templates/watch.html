@@ -1,0 +1,184 @@
+{%extends 'base.html'%}
+{%block context%}
+<br>
+<br>
+<div style="align-items: center; margin-left: 10%;">
+    <div class="row gy-4 justify-content-center" style="width: 99%;">
+        <div class="col-md-8">
+            <div class="card" style="width: 90%; max-height: 1020px;">
+                <div class="video-wrap">
+                    <video src="/static/videos/Average Russian dashcam video meme.mp4" controls style=" border-radius: 8px;">
+                        <script>
+                            document.querySelectorAll('.video-wrap video').forEach(video => {
+                                function setRatio() {
+                                    if (video.videoWidth && video.videoHeight) {
+                                        video.parentElement.style.aspectRatio = `${video.videoWidth} / ${video.videoHeight}`;
+                                    }
+                                }
+
+                                if (video.readyState >= 1) {
+                                    // metadata already loaded (e.g. cached video)
+                                    setRatio();
+                                } else {
+                                    video.addEventListener('loadedmetadata', setRatio);
+                                }
+                            });
+                            </script>
+                    </video>
+                </div>
+
+                <div class="card-body">
+                    <h2 class="card-title">Video title</h2>
+                    <a href="/channel/" class="d-block text-decoration-none text-reset">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                            <img src="/static/images/profile.png" height="40" width="40" class="rounded-circle" alt="channelName" onerror="this.style.display='none'">
+                            <h3 style="margin: 0;">channelName</h3>
+                        </div>
+                    </a>
+                    <a href="#" class="btn btn-danger">Subscribe</a>
+                    <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                        <input type="radio" class="btn-check" name="reaction" id="btncheck1" autocomplete="off">
+                        <label class="btn btn-outline-light" for="btncheck1">Like</label>
+
+                        <input type="radio" class="btn-check" name="reaction" id="btncheck2" autocomplete="off">
+                        <label class="btn btn-outline-light" for="btncheck2">Dislike</label>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item" style="width: 90%;">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#Description" aria-expanded="false">
+                            <h5>Description</h5>
+                        </button>
+                    </h2>
+                    <div id="Description" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <strong>Views 111.111</strong>
+                            <br>
+                            Descripton of lorem ipsum dolor sit amet
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card" style="width: 90%;">
+                <h2>Comments:</h2>
+                <div>
+                    <div class="card" style="width: 90%;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <img src="/static/images/profile.png" height="40" width="40" class="rounded-circle" alt="channelName" onerror="this.style.display='none'">
+                            <h5 style="margin: 0;">@Someone</h5>
+                        </div>
+                        <h6>Comment left by someone</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <h3>Watch more:</h3>
+            <div class="d-flex flex-nowrap overflow-x-auto gap-2 pb-2" role="tablist">
+                <button type="button" class="btn btn-light text-nowrap active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" role="tab" aria-controls="all" aria-selected="true">All</button>
+                <button type="button" class="btn btn-light text-nowrap" id="new-tab" data-bs-toggle="tab" data-bs-target="#new" role="tab" aria-controls="new" aria-selected="false">Newest</button>
+                <button type="button" class="btn btn-light text-nowrap" id="trending-tab" data-bs-toggle="tab" data-bs-target="#trending" role="tab" aria-controls="trending" aria-selected="false">Trending</button>
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+                    <!-- all videos  -->
+                    <a href="/watch/#" class="d-block text-decoration-none text-reset " style=" max-width: 95%; min-width: 300px;">
+                        <div class="card mb-3" style=" width: 100%;">
+                            <div class="row g-0 align-items-center">
+                                <div class="col-5">
+                                    <div class="ratio ratio-16x9">
+                                        <img src="/static/images/preset_thumpnail.png" style="object-fit: cover; border-radius: 8px;" alt="Home Image">
+                                    </div>
+                                </div>
+                                <div class="col-7">
+                                    <div class="card-body py-0">
+                                        <h5 class="card-title mb-1" style="font-size: 16px;">Title of the intresting video..</h5>
+                                        <small class="text-body-light">100 Views • 1 Hour ago</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="tab-pane fade" id="new" role="tabpanel" aria-labelledby="new-tab">
+                    <a href="/watch/#" class="d-block text-decoration-none text-reset">
+                        <div class="card mb-3" style="width: 90%; max-width: 430px;">
+                            <div class="row g-0 align-items-center">
+                                <div class="col-5">
+                                    <div class="ratio ratio-16x9">
+                                        <img src="/static/images/preset_thumpnail.png" style="object-fit: cover; border-radius: 8px;" alt="Home Image">
+                                    </div>
+                                </div>
+                                <div class="col-7">
+                                    <div class="card-body py-0">
+                                        <h5 class="card-title mb-1" style="font-size: 16px;">Title of the intresting video..</h5>
+                                        <small class="text-body-light">100 Views • 1 Hour ago</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="tab-pane fade" id="trending" role="tabpanel" aria-labelledby="trending-tab">
+                    <!-- trending videos-->
+                    <a href="/watch/#" class="d-block text-decoration-none text-reset">
+                        <div class="card mb-3" style="width: 90%; max-width: 430px;">
+                            <div class="row g-0 align-items-center">
+                                <div class="col-5">
+                                    <div class="ratio ratio-16x9">
+                                        <img src="/static/images/preset_thumpnail.png" style="object-fit: cover; border-radius: 8px;" alt="Home Image">
+                                    </div>
+                                </div>
+                                <div class="col-7">
+                                    <div class="card-body py-0">
+                                        <h5 class="card-title mb-1" style="font-size: 16px;">Title of the intresting video..</h5>
+                                        <small class="text-body-light">100 Views • 1 Hour ago</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tabBtn => {
+  tabBtn.addEventListener('shown.bs.tab', event => {
+    // the tab that just became active
+    event.target.classList.remove('btn-light');
+    event.target.classList.add('btn-dark');
+
+    // the tab that was active before (now deactivated)
+    if (event.relatedTarget) {
+      event.relatedTarget.classList.remove('btn-light');
+      event.relatedTarget.classList.add('btn-black');
+    }
+  });
+});
+
+const reactionInputs = document.querySelectorAll('input[name="reaction"]');
+let lastChecked = null;
+
+reactionInputs.forEach(input => {
+  input.addEventListener('click', () => {
+    if (lastChecked === input) {
+      // clicking the already-selected one again -> deselect it
+      input.checked = false;
+      lastChecked = null;
+    } else {
+      lastChecked = input;
+    }
+  });
+});
+</script>
+{%endblock%}

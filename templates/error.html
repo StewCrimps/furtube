@@ -1,0 +1,25 @@
+{%extends 'base.html'%}
+{%block context%}
+<div style="display: flex; align-items: center; justify-content: center; height: 40vh;">
+    <!-- your content here -->
+
+    
+    <div style="text-align: center;" class="text-align-center">
+        <a href="/" class="d-block text-decoration-none text-reset">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;">
+            <img src="/static/images/orange_main_full_logo.png" alt="Furtube Logo" style="width: 300px;">
+            <h1 style="text-align: center; margin: 0;"></h1>
+        </div>
+        </a>
+        <h1 >This Content Is Unavailible.</h1>
+        {%if error == "404" %}
+        <h3>Error: {{ error }}</h3>
+        <h3></h3>
+        {%else%}
+        <p>{{ forbidenQuote }}</p>
+        {%endif%}
+    </div>
+
+</div>
+
+{%endblock%}

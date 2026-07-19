@@ -1,0 +1,13 @@
+Ban/Warning System
+Users report video/post
+If it reaches a example 100 reports it gets flagged and the owner of the clip has the options to remove the content or appeal. 
+
+Appeal System
+When a creator requests an appeal, a real individual must review the reported content and if he deems that it doesn't violate the terms of service the content remains in the page. Otherwise it gets deleted.
+If a creator gets reported too many times, after a real individual review he gets suspended (Banned) from the site, He only lose the ability to create share or interact with others in the platform, that means that he will only be able to watch content. 
+
+Views System
+Every time a user sees a video for the first time, the video gets a view. Views count individual views not repeated views.
+
+Engagement System
+The user gets content from intrested hashtags, likes and creator types.

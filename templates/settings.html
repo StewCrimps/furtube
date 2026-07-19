@@ -1,0 +1,93 @@
+{%extends 'base.html'%}
+{%block context%}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("submitMode").addEventListener("click", function() {
+            let modeField = document.getElementById("modeField");
+            modeField.value = (modeField.value === "dark") ? "light" : "dark";
+        });
+    });
+</script>
+    
+    <h2 style="color: #99aab5;">Settings</h2>
+    <div class="container-fluid d-flex justify-content-center align-items-center mt-5 text-light" style="height: 50vh;">
+        <div class="card bg-dark" style="width: 50rem; color: #ccc;">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- Your form goes here -->
+                        <form method="POST">
+                            {{ form.hidden_tag() }}
+                             
+                            <br>
+                            <div class="form-group">
+                                {{ form.name.label(class="form-control-label") }}
+                                {{ form.name(class="form-control", value=current_user.name) }}
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                {{ form.gender.label(class="form-control-label") }}
+                                <select class="form-control" name="gender" id="genderSelect" >
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="prefer-not-to-say">Prefer not to say</option>
+                                    <option value="croissant">Croissant</option>
+                                    <option value="other">Other</option>
+                                    
+                                </select>
+                            </div>
+                            <script>
+                                document.querySelector('select[name="gender"]').value= "{{current_user.gender}}"
+                            </script>
+                            
+                            
+                            <br>
+                            
+                            
+                            {% if mode == 'dark' %}
+                            {{ form.mode(value="light", id="modeField") }}
+                            {{ form.submitMode(class="btn btn-light", id="submitMode") }}
+                        {% else %}
+                            {{ form.mode(value="dark", id="modeField") }}
+                            {{ form.submitMode(class="btn btn-dark", id="submitMode") }}
+                        {% endif %}
+                            
+                            <br>
+                            <br>
+
+                            {{ form.submit(class="btn btn-primary") }}
+                        </form>
+                    </div>
+                    <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload_image') }}" class="col-md-6 d-flex justify-content-center align-items-center">
+                        {{ form.hidden_tag() }}
+    
+                        <div class="text-center">
+                            <!-- Hidden file input -->
+                            <input type="file" id="fileInput" style="display: none;" name="profile_image">
+                            <img src="{{ url_for('static', filename='pimages/' + current_user.image) }}" alt="" class="img-fluid rounded-circle w-50" id="profileImage">
+                            <div class="align-items-center" style="border: 1px solid #99aab5; border-radius: 15px; margin-top: 10px;">
+                                &nbsp;&nbsp;&nbsp;{{ current_user.email }} &nbsp;&nbsp;&nbsp;
+                            </div>
+                           
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+
+
+
+
+        document.getElementById('profileImage').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+    
+        document.getElementById('fileInput').addEventListener('change', function() {
+            this.form.submit();
+        });
+    </script>
+    
+{%endblock%}

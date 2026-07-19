@@ -1,0 +1,83 @@
+{%extends 'base.html'%}
+{%block context%}
+<div>
+<div class="row">
+    <div style="display: flex; align-items: center; justify-content: center; height: 40vh;">
+            <div class="card" style="height: 200px; width: 79%;">
+
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;">
+                    <div><img src="/static/images/profile.png" class="card-img-top" style="height: 150px; width: 150px;"></div>
+                    <div>
+                        <h2 class="card-title" style="font-weight: bold;">channelName</h2>
+                        <h6>@username</h6>
+                        <p class="card-text mb-1">Some long channel description that takes more than 50 characters.<button type="button" class="btn btn-sm p-0" data-bs-toggle="modal" data-bs-target="#fullDescription" style="color: white;">more...</button></p>
+                    <div><a href="#" class="btn btn-danger">Subscribe</a></div>
+                </div>
+            </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="fullDescription" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" style="display: flex; align-items: center; justify-content: center; height: 40vh;" >
+        <div class="modal-content">
+            
+            <div style="width: 99%; padding: 0 12px;">
+                
+                <div class="d-flex justify-content-between align-items-center">
+                <h3 id="exampleModalLabel" style="font-weight: bold;">UserName</h3> 
+                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1); box-shadow: none !important;"></button>
+                </div>
+                <br>
+                <h3 id="exampleModalLabel" style="font-weight: bold;">Description</h3>
+                <h6>Some long channel description that takes more than 50 characters and wraps so it is more apealing to the user.</h6>
+                        
+                <div class="modal-body">
+                ...
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div class="center-row" style="padding-left: 60px; padding-right: 60px;">
+    <div style="width: 100%; padding: 0 24px; ">
+    <div class="big-video">
+        <a href="/watch/#" class="d-block text-decoration-none text-reset">
+        <div class="card mb-3" style="width: 100%;">
+            <div class="ratio ratio-16x9">
+            <img src="/static/images/preset_thumpnail.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" alt="thumpnail">
+            </div>
+            <div class="card-body px-0">
+            <h5 class="card-title mb-1" style="font-size: 26px; font-optical-sizing: auto; font-weight: 600;">Title of the intresting video..</h5>
+            <small class="text-body-light">100 Views • 1 Hour ago</small>
+            </div>
+        </div>
+        </a>
+        <a href="/watch/#" class="d-block text-decoration-none text-reset">
+        <div class="card mb-3" style="width: 100%;">
+            <div class="ratio ratio-16x9">
+            <img src="/static/images/preset_thumpnail.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" alt="thumpnail">
+            </div>
+            <div class="card-body px-0">
+            <h5 class="card-title mb-1" style="font-size: 26px; font-optical-sizing: auto; font-weight: 600;">Title of the intresting video..</h5>
+            <small class="text-body-light">100 Views • 1 Hour ago</small>
+            </div>
+        </div>
+        </a>
+        <a href="/watch/#" class="d-block text-decoration-none text-reset">
+        <div class="card mb-3" style="width: 100%;">
+            <div class="ratio ratio-16x9">
+            <img src="/static/images/preset_thumpnail.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" alt="thumpnail">
+            </div>
+            <div class="card-body px-0">
+            <h5 class="card-title mb-1" style="font-size: 26px; font-optical-sizing: auto; font-weight: 600;">Title of the intresting video..</h5>
+            <small class="text-body-light">100 Views • 1 Hour ago</small>
+            </div>
+        </div>
+        </a>
+        <!-- repeat cards -->
+    </div>
+    </div>
+</div>
+{%endblock%}
