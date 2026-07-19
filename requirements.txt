@@ -16,7 +16,6 @@ cryptography==49.0.0
 curl_adapter==1.2.1
 curl_cffi==0.15.0
 cycler==0.12.1
-dbus-python==1.4.0
 displaycal==3.9.17
 distro==1.9.0
 dnspython==2.8.0
