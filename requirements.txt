@@ -81,7 +81,6 @@ setuptools==83.0.0
 six==1.17.0
 smbus==1.1
 soupsieve==2.8.4
-TBB @ file:///build/onetbb/src/build/python/python_build
 Twisted==26.4.0
 typing_extensions==4.16.0
 urllib3==2.7.0
