@@ -20,9 +20,9 @@ from flask_mail import Mail, Message
 app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-# app.cofing['MAIL_USE_SSL'] = 
+# app.confing['MAIL_USE_SSL'] = 
 app.config['MAIL_USERNAME'] = 'furtu.be.official'
-app.config['MAIL_PASSWORD'] = 'wkqz wxho joac jzhl' 
+app.config['MAIL_PASSWORD'] = 'oqaukfqnwvxahudh' 
 mail=Mail(app)
 
 
@@ -217,7 +217,7 @@ def send_welcome_email(user):
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 5px; background-color: #101010;">
     <div style="background-color: #333333; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
         <h1 style="color: #965209; margin-bottom: 20px;">Welcome to FurTube</h1>
-        <img src="https://r4ymbmvtbj2c.share.zrok.io/static/images/orange_main_full_logo.png" alt="Furtube Logo" style="width: 300px; margin:auto; display:block;">
+        <img src="https://www.furtu.be/static/images/orange_main_full_logo.png" alt="Furtube Logo" style="width: 300px; margin:auto; display:block;">
         <h4 style="color: #666; line-height: 1.6;">
             Hello {user.username},<br><br>
             You are now a member of the <b>furtu.be</b> community.<br><br>
@@ -225,10 +225,10 @@ def send_welcome_email(user):
             Thank you for signing up to our site!
             <br><br> 
             Have fun!
-            And incase you haven't read the terms of service, which you definately didn't please read the <a href="localhost:5000/terms-of-service/">Terms Of Service</a>
+            And incase you haven't read the terms of service, which you definately didn't please read the <a href="furtu.be/terms-of-service/">Terms Of Service</a>
         </h4>
         <p style="color: #999; font-size: 15px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-            If you did not sign-up to furtube using this e-mail contact our <a href="localhost:5000/login">support</a>. Thank you.
+            If you did not sign-up to furtube using this e-mail contact our <a href="furtu.be/support">support</a>. Thank you.
         </p>
     </div>
 </div>
