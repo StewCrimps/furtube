@@ -62,7 +62,6 @@ python-dateutil==2.9.0
 python-steamgriddb==1.0.5
 pyudev==0.24.4
 PyYAML==6.0.3
-QTermWidget==2.4.0
 requests==2.34.2
 rich==15.0.0
 Send2Trash==1.8.3
