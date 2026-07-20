@@ -53,7 +53,6 @@ pycairo==1.29.0
 pycparser==3.0
 pycurl==7.47.0
 Pygments==2.20.0
-PyGObject==3.56.3
 pyparsing==3.3.2
 PyQt5==5.15.11
 PyQt5_sip==12.18.0
@@ -64,7 +63,6 @@ python-steamgriddb==1.0.5
 pyudev==0.24.4
 PyYAML==6.0.3
 QTermWidget==2.4.0
-QtPy==2.4.3
 requests==2.34.2
 rich==15.0.0
 Send2Trash==1.8.3
@@ -85,4 +83,3 @@ yara-python==4.5.5
 zeroconf==0.149.1
 zope.event==6.2
 zope.interface==8.5
-PyGObject<3.51.0
