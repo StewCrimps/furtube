@@ -31,8 +31,30 @@
                     {{ error }}
                 </div>
             {% endif %}
-
+            <form method="POST">
+                <div class="form-group">
+                    <label for="video" class="form-control-label">Video Title</label>
+                    <input type="text" autocomplete="title" id="text" name="text" class="form-control" placeholder="Video Title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="video" class="form-control-label">Video Description</label>
+                    <input type="text" autocomplete="email" id="text" name="text" class="form-control" placeholder="Video Description" required>
+                </div>
+            </form>
             <form method="POST" enctype="multipart/form-data">
+                
+                <div class="form-group">
+                    <label for="video" class="form-control-label">Thumbnail file</label>
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        class="form-control"
+                        accept=".png,.jpg,.webp,.jpeg"
+                        required
+                    >
+                </div>
                 <div class="form-group">
                     <label for="video" class="form-control-label">Video file</label>
                     <input
@@ -44,12 +66,12 @@
                         required
                     >
                 </div>
-
                 <br>
 
                 <button type="submit" class="btn btn-light" style="width: 100%;">
                     Upload
                 </button>
+                
             </form>
         </div>
     </div>

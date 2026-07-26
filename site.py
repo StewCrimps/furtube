@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask import Flask, render_template, request, abort, session, redirect,url_for
+from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from threading import Thread
 import os
@@ -59,9 +60,15 @@ class Videos(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
-    # publisher = db.Column(db.Integer, db.ForeignKey('user.id'))
+    thumpnail = db.Column(db.String)
     date_uploaded = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
+class UserVideo(db.Model):
+    publisher = db.Column(db.Integer, db.ForeignKey('users.id'),primary_key=True)
+    vidvideo = db.Column(db.Integer, db.ForeignKey('videos.id'), primary_key=True)
+    date_uploaded = db.Column(db.DateTime, default=datetime.utcnow)
+    intrested = db.Column(db.Integer)
+    unintrested = db.Column(db.Integer)
 
 with app.app_context():
     db.create_all()
@@ -82,8 +89,25 @@ def get_current_user():
 # Route for the index page
 @app.route('/')
 def home(): 
+    db_videos = Videos.query.order_by(Videos.id.desc()).all()
+    fs_videos = get_uploaded_videos()
+    comb = []
+    for v in db_videos:
+        comb.append({
+            "source": "db",
+            "id": v.id,
+            "title": v.title,
+            "description": v.description,
+        })
+    for v in fs_videos:
+        comb.append({
+            "source": "fs",
+            "filename": v.get("filename"),
+            "title": v.get("title"),
+            "ext": v.get("ext"),
+        })
     current_user = get_current_user()
-    return render_template('index.html',videos=get_uploaded_videos(),current_user=current_user)
+    return render_template('index.html',current_user=current_user,videos=comb)
 
 # Route for the login page
 @app.route('/login/', methods=['GET', 'POST'])
@@ -115,7 +139,13 @@ def signup():
         return redirect (url_for("home"))
     if request.method == 'POST':
         username = request.form['username']
-        handle= request.form['handle']
+        handle = request.form['handle'].lower()
+        for i in handle:
+            if i>='a' and i<='z' or i in ['_','.','-'] or i.isdigit():   
+                print("Handle is fine")
+            else:
+                error = "Handle cannot contain special characters, accepted a-z , 0-9 and '.''-''_'"
+                return render_template('signup.html', error=error)
         email = request.form['email']
         password1 = request.form['password1']
         password2 = request.form['password2']
@@ -146,11 +176,11 @@ def signup():
             return redirect(url_for('home'))
     return render_template('signup.html',current_user=current_user,error="agagag")
 
-@app.route('/channel/')
+@app.route('/channel/@<string:id>')
 def channel():
-
+    handle=id
     current_user = get_current_user()
-    return render_template('channel.html')
+    return render_template('channel.html',handle=handle)
 
 @app.route('/search/')
 def search(): 
@@ -158,9 +188,9 @@ def search():
     return render_template('search.html',videos=get_uploaded_videos())
 
 # Route for the dashboard page
-@app.route('/watch/')
+@app.route('/watch/<string:id>')
 def watch():
-    videoid = request.args.get('watch')
+    videoid=id
     print(videoid)
     current_user = get_current_user()
     return render_template('watch.html',tag=videoid,current_user=current_user)
@@ -170,12 +200,17 @@ def tos():
     current_user = get_current_user()
     return render_template('tos.html',current_user=current_user)
 
+@app.route('/privacy-policy/')
+def privacypolicy():
+    current_user = get_current_user()
+    return render_template('privacy-policy.html',current_user=current_user)
+
 @app.route('/history/')
 def history(): 
     current_user = get_current_user()
     return render_template('history.html',videos=get_uploaded_videos(),current_user=current_user)
 
-@app.route('/upload', methods=['GET', 'POST'])
+@app.route('/upload/', methods=['GET', 'POST'])
 def upload(): 
     if "user_email" not in session:
         return redirect (url_for("login"))
@@ -187,6 +222,29 @@ def upload():
         print (file, extension)
         if extension not in allowedFormats:
             return render_template('editor.html', error="Invalid file format.")
+        os.makedirs(videoUpload, exist_ok=True)
+
+        filename = secure_filename(file.filename)
+        save_path = os.path.join(videoUpload, filename)
+        try:
+            file.save(save_path)
+        except Exception as e:
+            return render_template('editor.html', error=f"Failed to save file: {e}")
+
+            # create a Videos DB record (use filename as title, empty description)
+        title = os.path.splitext(filename)[0]
+        try:
+            new_vid = Videos(title=title, description="")
+            db.session.add(new_vid)
+            db.session.commit()
+        except Exception as e:
+            # rollback on failure and remove saved file
+            db.session.rollback()
+            try:
+                os.remove(save_path)
+            except Exception:
+                pass
+            return render_template('editor.html', error=f"Failed to save video record: {e}")
     return render_template('editor.html')
 
 @app.errorhandler(404)
@@ -217,7 +275,7 @@ def send_welcome_email(user):
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 5px; background-color: #101010;">
     <div style="background-color: #333333; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
         <h1 style="color: #965209; margin-bottom: 20px;">Welcome to FurTube</h1>
-        <img src="https://r4ymbmvtbj2c.share.zrok.io/static/images/orange_main_full_logo.png" alt="Furtube Logo" style="width: 300px; margin:auto; display:block;">
+        <img src="https://www.furtu.be/static/images/orange_main_full_logo.png" alt="Furtube Logo" style="width: 300px; margin:auto; display:block;">
         <h4 style="color: #666; line-height: 1.6;">
             Hello {user.username},<br><br>
             You are now a member of the <b>furtu.be</b> community.<br><br>
@@ -225,10 +283,10 @@ def send_welcome_email(user):
             Thank you for signing up to our site!
             <br><br> 
             Have fun!
-            And incase you haven't read the terms of service, which you definately didn't please read the <a href="localhost:5000/terms-of-service/">Terms Of Service</a>
+            And incase you haven't read the terms of service, which you definately didn't please read the <a href="furtu.be/terms-of-service/">Terms Of Service</a>
         </h4>
         <p style="color: #999; font-size: 15px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-            If you did not sign-up to furtube using this e-mail contact our <a href="localhost:5000/login">support</a>. Thank you.
+            If you did not sign-up to furtube using this e-mail contact our <a href="furtu.be/support">support</a>. Thank you.
         </p>
     </div>
 </div>
@@ -251,4 +309,4 @@ def send_welcome_email(user):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='192.168.1.2', port=5000)
