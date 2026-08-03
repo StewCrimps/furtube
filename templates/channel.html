@@ -43,6 +43,29 @@
 <div class="center-row" style="padding-left: 60px; padding-right: 60px;">
     <div style="width: 100%; padding: 0 24px; ">
     <div class="big-video">
+        {% for video in videos %}
+        <a href="/watch/?watch={{ video.filename }}" class="d-block text-decoration-none text-reset">
+        <div class="card mb-3" style="width: 100%;">
+            <div class="ratio ratio-16x9">
+            <video src="{{ url_for('static', filename='videos/' + video.filename) }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" muted playsinline></video>
+            </div>
+            <div class="card-body px-0">
+            <h5 class="card-title mb-1" style="font-size: 26px; font-optical-sizing: auto; font-weight: 600;">{{ video.title }}</h5>
+            <small class="text-body-light">Uploaded by {{ video.uploaded_by }} • {{ video.ext|upper }}</small>
+            </div>
+        </div>
+        </a>
+        {% else %}
+        <div class="alert alert-secondary">No videos uploaded yet.</div>
+        {% endfor %}
+
+
+
+
+
+
+
+
         <a href="/watch/#" class="d-block text-decoration-none text-reset">
         <div class="card mb-3" style="width: 100%;">
             <div class="ratio ratio-16x9">
