@@ -1,11 +1,11 @@
-from datetime import datetime
 from flask import Flask, render_template, request, abort, session, redirect,url_for
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from threading import Thread
-import os
+from datetime import datetime
+import humanize
 import uuid
-
+import os
 
 
 app = Flask(__name__)
@@ -32,6 +32,11 @@ mail=Mail(app)
 ##################################################################
 
 # Definitions ##################################################################
+def time_formater(time):
+    past = datetime.strptime(str(time), "%Y-%m-%d %H:%M:%S.%f")
+    formatted_time = humanize.naturaltime(datetime.now() - past)
+    return formatted_time
+
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in allowedFormats
 
@@ -132,7 +137,7 @@ def home():
             "title": v.title,
             "description": v.description,
             "uploaded_by": uploader.handle if uploader else "unknown",
-            "ext": v.filename.rsplit(".", 1)[1].lower() if "." in v.filename else "",
+            "date_added": time_formater(v.date_uploaded),
         })
     current_user = get_current_user()
     return render_template('index.html',current_user=current_user,videos=videos)
@@ -216,7 +221,7 @@ def channel(handle=None):
     if current_user is None:
         return redirect(url_for('login'))
     if handle == None:
-        variable = handle
+        variable = current_user
         handle=current_user
         user_videos = Videos.query.filter_by(uploaded_by=current_user.id).order_by(Videos.id.desc()).all()
         print("jm,hjh",current_user.handle)
@@ -233,10 +238,12 @@ def channel(handle=None):
     for video in user_videos:
         if os.path.exists(os.path.join(videoUpload, video.filename)):
             channel_videos.append({
+                "id": video.id,
                 "filename": video.filename,
                 "title": video.title,
                 "ext": video.filename.rsplit(".", 1)[1].lower() if "." in video.filename else "",
-                "uploaded_by": current_user.handle,
+                "uploaded_by": variable.handle,
+                "date_added": time_formater(video.date_uploaded),
             })
     return render_template('channel.html', current_user=current_user, videos=channel_videos, channel_user=variable)
     # return render_template('channel.html',handle=handle)
@@ -275,6 +282,11 @@ def privacypolicy():
     current_user = get_current_user()
     return render_template('privacy-policy.html',current_user=current_user)
 
+@app.route('/cookies-usage/')
+def cookie_usage():
+    current_user = get_current_user()
+    return render_template('tos.html',current_user=current_user)
+
 @app.route('/history/')
 def history(): 
     current_user = get_current_user_record()
@@ -296,17 +308,17 @@ def history():
             "title": video.title,
             "description": video.description,
             "uploaded_by": uploader.handle if uploader else "unknown",
-            "ext": video.filename.rsplit(".", 1)[1].lower() if "." in video.filename else "",
+            "date_added": time_formater(video.date_uploaded),
         })
     return render_template('history.html', videos=videos, current_user=current_user)
-
+@app.route('/channel/upload', methods=['GET', 'POST'])
 @app.route('/upload', methods=['GET', 'POST'])
 def upload(): 
     current_user = get_current_user_record()  
     if current_user is None:
         return redirect(url_for("login"))  
     if request.method == "POST":
-        title = request.form.get("title", "").strip()
+        title = request.form.get("title").strip()
         description = request.form.get("description", "").strip()
         thumbnail = request.files.get("image")
         file = request.files.get("video")
