@@ -4,14 +4,19 @@
 <div class="row">
     <div style="display: flex; align-items: center; justify-content: center; height: 40vh;">
             <div class="card" style="height: 200px; width: 79%;">
-
+                
                 <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;">
                     <div><img src="/static/images/profile.png" class="card-img-top" style="height: 150px; width: 150px;"></div>
                     <div>
-                        <h2 class="card-title" style="font-weight: bold;">channelName</h2>
-                        <h6>@username</h6>
+                        <h2 class="card-title" style="font-weight: bold;">{{channel_user.username}}</h2>
+                        <h6>@{{channel_user.handle}}</h6>
                         <p class="card-text mb-1">Some long channel description that takes more than 50 characters.<button type="button" class="btn btn-sm p-0" data-bs-toggle="modal" data-bs-target="#fullDescription" style="color: white;">more...</button></p>
-                    <div><a href="#" class="btn btn-danger">Subscribe</a></div>
+                        {{channel_user}} - {{current_user.handle}}
+                        {%if channel_user == None or channel_user == current_user.handle%}
+                            <div><a href="#" class="btn btn-danger">Upload Video</a></div>
+                        {%else%}
+                            <div><a href="#" class="btn btn-danger">Subscribe</a></div>
+                        {%endif%}
                 </div>
             </div>
     </div>
@@ -44,7 +49,7 @@
     <div style="width: 100%; padding: 0 24px; ">
     <div class="big-video">
         {% for video in videos %}
-        <a href="/watch/?watch={{ video.filename }}" class="d-block text-decoration-none text-reset">
+        <a href="/watch/{{ video.id }}" class="d-block text-decoration-none text-reset">
         <div class="card mb-3" style="width: 100%;">
             <div class="ratio ratio-16x9">
             <video src="{{ url_for('static', filename='videos/' + video.filename) }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" muted playsinline></video>
@@ -56,7 +61,7 @@
         </div>
         </a>
         {% else %}
-        <div class="alert alert-secondary">No videos uploaded yet.</div>
+        <h2>No videos uploaded yet :/</h2>
         {% endfor %}
 
 

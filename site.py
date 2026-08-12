@@ -10,7 +10,8 @@ import uuid
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'haha guess the key buh')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+os.makedirs(app.instance_path, exist_ok=True)
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(app.instance_path, 'users.db')}"
 app.url_map.strict_slashes = False #Makes /example(/) not mandatory
 
 db = SQLAlchemy(app)
@@ -50,11 +51,11 @@ def get_uploaded_videos():
 # Create Model
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20),nullable=False) # The decored version of handle Example "TheUSERNAme21"
-    handle = db.Column(db.String(25),nullable=False,unique=True) #The stripped version of username used to find the user through the url "theusername21"
-    email = db.Column(db.String(20), nullable=False,unique=True)
-    password = db.Column(db.String(15), nullable=False)  
-    profile_image = db.Column(db.String(30))
+    username = db.Column(db.String(80),nullable=False) 
+    handle = db.Column(db.String(80),nullable=False,unique=True) 
+    email = db.Column(db.String(120), nullable=False,unique=True) 
+    password = db.Column(db.String(255), nullable=False) 
+    profile_image = db.Column(db.String(200)) 
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     verified = db.Column(db.Boolean,default=False,nullable=False)
     verification_token = db.Column(db.String(200),unique=True,nullable=True)
@@ -67,6 +68,16 @@ class Videos(db.Model):
     date_uploaded = db.Column(db.DateTime, default=datetime.utcnow)
     uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     filename = db.Column(db.String,unique=True,nullable=False)
+
+class UserHistory(db.Model):
+    __tablename__ = 'user_history'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    video_id = db.Column(db.Integer, db.ForeignKey('videos.id'), nullable=False)
+    viewed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'video_id', name='uq_user_video_history'),
+    )
 
 # class UserVideo(db.Model):
 #     publisher = db.Column(db.Integer, db.ForeignKey('users.id'),primary_key=True)
@@ -94,6 +105,15 @@ def get_current_user_record():
         return None
     return Users.query.filter_by(email=email).first()
 
+
+def record_user_history(user_id, video_id):
+    history_entry = UserHistory.query.filter_by(user_id=user_id, video_id=video_id).first()
+    if history_entry:
+        history_entry.viewed_at = datetime.utcnow()
+    else:
+        db.session.add(UserHistory(user_id=user_id, video_id=video_id))
+    db.session.commit()
+
 ##################################################################
 
 # Site Routes ##################################################################
@@ -101,24 +121,21 @@ def get_current_user_record():
 @app.route('/')
 def home(): 
     db_videos = Videos.query.order_by(Videos.id.desc()).all()
-    fs_videos = get_uploaded_videos()
-    comb = []
+    videos = []
     for v in db_videos:
-        comb.append({
-            "source": "db",
+        if not os.path.exists(os.path.join(videoUpload, v.filename)):
+            continue
+        uploader = Users.query.get(v.uploaded_by)
+        videos.append({
             "id": v.id,
+            "filename": v.filename,
             "title": v.title,
             "description": v.description,
-        })
-    for v in fs_videos:
-        comb.append({
-            "source": "fs",
-            "filename": v.get("filename"),
-            "title": v.get("title"),
-            "ext": v.get("ext"),
+            "uploaded_by": uploader.handle if uploader else "unknown",
+            "ext": v.filename.rsplit(".", 1)[1].lower() if "." in v.filename else "",
         })
     current_user = get_current_user()
-    return render_template('index.html',current_user=current_user,videos=comb)
+    return render_template('index.html',current_user=current_user,videos=videos)
 
 # Route for the login page
 @app.route('/login/', methods=['GET', 'POST'])
@@ -152,15 +169,15 @@ def signup():
     if current_user is not None:
         return redirect (url_for("home"))
     if request.method == 'POST':
-        username = request.form['username']
-        handle = request.form['handle'].lower()
+        username = request.form['username'].strip() # ===> strip για να αφαιρούνται κενά 
+        handle = request.form['handle'].strip().lower().lstrip('@') # ===> trim + lowercase + αφαίρεση προαιρετικού @, αν δοθεί παράδειγμα με @ το route δεν πρέπει να το απορρίπτει.
         for i in handle:
             if i>='a' and i<='z' or i in ['_','.','-'] or i.isdigit():   
                 print("Handle is fine")
             else:
                 error = "Handle cannot contain special characters, accepted a-z , 0-9 and '.''-''_'"
                 return render_template('signup.html', error=error)
-        email = request.form['email']
+        email = request.form['email'].strip().lower() # ===>  trim/lowercase 
         password1 = request.form['password1']
         password2 = request.form['password2']
          
@@ -178,28 +195,40 @@ def signup():
         else: # all ok save record to our database
             new_user = Users(email=email, 
                             password=password1,
-                            username = request.form['username'],
-                            handle = request.form['handle'],
+                            username = username,
+                            handle = handle,
                             profile_image = "profile.png",
                             verified = False,
                             verification_token = str(uuid.uuid4())
-                            )  
+                            )
             db.session.add(new_user)  
-            db.session.commit()  # add to database
+            db.session.commit()  
             session["user_email"] = email
             send_welcome_email(new_user)
             
             return redirect(url_for('home'))
-    return render_template('signup.html',current_user=current_user,error="agagag")
+    return render_template('signup.html',current_user=current_user,error="")
 
 @app.route('/channel/')
-# @app.route('/channel/@<string:id>')
-def channel():
-    # handle=id
+@app.route('/channel/@<string:handle>', methods=['GET'])
+def channel(handle=None):
     current_user = get_current_user_record()
     if current_user is None:
         return redirect(url_for('login'))
-    user_videos = Videos.query.filter_by(uploaded_by=current_user.id).order_by(Videos.id.desc()).all()
+    if handle == None:
+        variable = handle
+        handle=current_user
+        user_videos = Videos.query.filter_by(uploaded_by=current_user.id).order_by(Videos.id.desc()).all()
+        print("jm,hjh",current_user.handle)
+    else:
+        print(handle)
+        user = Users.query.filter_by(handle=handle).first()
+        if user is None:
+            return redirect(url_for('home'))
+        variable = user
+        user_videos = Videos.query.filter_by(uploaded_by=user.id).order_by(Videos.id.desc()).all()
+        print("OOOP",user)
+        print("jm,hjh",current_user.handle)
     channel_videos = []
     for video in user_videos:
         if os.path.exists(os.path.join(videoUpload, video.filename)):
@@ -209,7 +238,7 @@ def channel():
                 "ext": video.filename.rsplit(".", 1)[1].lower() if "." in video.filename else "",
                 "uploaded_by": current_user.handle,
             })
-    return render_template('channel.html', current_user=current_user, videos=channel_videos, channel_user=current_user)
+    return render_template('channel.html', current_user=current_user, videos=channel_videos, channel_user=variable)
     # return render_template('channel.html',handle=handle)
 
 @app.route('/search/')
@@ -219,12 +248,22 @@ def search():
     return render_template('search.html',videos=get_uploaded_videos(),current_user=current_user)
 
 # Route for the dashboard page
-@app.route('/watch/<string:id>')
-def watch():
-    videoid=id
-    print(videoid)
-    current_user = get_current_user()
-    return render_template('watch.html',tag=videoid,current_user=current_user)
+@app.route('/watch/<string:id>', methods=['GET'])
+def watch(id=None):
+    current_user = get_current_user_record()
+    videoid = id
+
+    video = None
+    if videoid:
+        if videoid.isdigit():
+            video = Videos.query.get(int(videoid))
+        else:
+            video = Videos.query.filter_by(filename=videoid).first()
+
+    if video and current_user:
+        record_user_history(current_user.id, video.id)
+
+    return render_template('watch.html', tag=videoid, current_user=current_user)
 
 @app.route('/terms-of-service/')
 def tos():
@@ -238,43 +277,78 @@ def privacypolicy():
 
 @app.route('/history/')
 def history(): 
-    current_user = get_current_user()
-    return render_template('history.html',videos=get_uploaded_videos(),current_user=current_user)
+    current_user = get_current_user_record()
+    if current_user is None:
+        return redirect(url_for('login'))
+
+    history_rows = UserHistory.query.filter_by(user_id=current_user.id).order_by(UserHistory.viewed_at.desc()).all()
+    videos = []
+    for row in history_rows:
+        video = Videos.query.get(row.video_id)
+        if not video:
+            continue
+        if not os.path.exists(os.path.join(videoUpload, video.filename)):
+            continue
+        uploader = Users.query.get(video.uploaded_by)
+        videos.append({
+            "id": video.id,
+            "filename": video.filename,
+            "title": video.title,
+            "description": video.description,
+            "uploaded_by": uploader.handle if uploader else "unknown",
+            "ext": video.filename.rsplit(".", 1)[1].lower() if "." in video.filename else "",
+        })
+    return render_template('history.html', videos=videos, current_user=current_user)
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload(): 
-    current_user = get_current_user_record()  # ===> Προστέθηκε η φόρτωση του συνδεδεμένου user από τη βάση. Γιατί: μόνο ένας συνδεδεμένος χρήστης επιτρέπεται να ανεβάζει και πρέπει να γνωρίζουμε τον uploader για να τον αποθηκεύσουμε στο record.
+    current_user = get_current_user_record()  
     if current_user is None:
-        return redirect(url_for("login"))  # ===> Άλλαξε το redirect να χρησιμοποιεί τον logged-in έλεγχο μέσω του current_user_record. Γιατί: αυτό κάνει το upload να ανοίγει μόνο για authenticated χρήστες, άρα και admin/όλοι οι συνδεδεμένοι χρήστες μπορούν να έχουν πρόσβαση.
+        return redirect(url_for("login"))  
     if request.method == "POST":
-        file = request.files["video"]  # ===> Έμεινε η ανάκτηση του αρχείου από το form. Γιατί: αυτό είναι το ίδιο upload payload που θα αποθηκεύσουμε.
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        thumbnail = request.files.get("image")
+        file = request.files.get("video")
+        if title == "":
+            return render_template('editor.html', error="Video title is required.", current_user=current_user.email)
+        if description == "":
+            return render_template('editor.html', error="Video description is required.", current_user=current_user.email)
+        if thumbnail is None or thumbnail.filename == "":
+            return render_template('editor.html', error="Thumbnail file is required.", current_user=current_user.email)
+        if file is None or file.filename == "":
+            return render_template('editor.html', error="Video file is required.", current_user=current_user.email)
+        if "." not in thumbnail.filename:
+            return render_template('editor.html', error="Invalid thumbnail file format.", current_user=current_user.email)
+        thumbnail_extension = thumbnail.filename.rsplit(".", 1)[1].lower()
+        if thumbnail_extension not in ["png", "jpg", "webp", "jpeg"]:
+            return render_template('editor.html', error="Thumbnail must be a PNG, JPG, JPEG, or WEBP file.", current_user=current_user.email)
         if file.filename == "":
-            return render_template('editor.html', error="Import a file.", current_user=current_user.email)  # ===> Προστέθηκε current_user στο render_template. Γιατί: η σελίδα editor χρειάζεται να γνωρίζει ποιος χρήστης είναι συνδεδεμένος ώστε να παραμείνει σωστά το UI state.
+            return render_template('editor.html', error="Import a file.", current_user=current_user.email)  
         if "." not in file.filename:
-            return render_template('editor.html', error="Invalid file format.", current_user=current_user.email)  # ===> Προστέθηκε έλεγχος για files χωρίς extension. Γιατί: αποτρέπεται να διασπάσει το αρχείο σε λάθος extension.
+            return render_template('editor.html', error="Invalid video file format.", current_user=current_user.email)  
         extension = file.filename.rsplit(".", 1)[1].lower()
         print(file, extension)
         if extension not in allowedFormats:
-            return render_template('editor.html', error="Invalid file format.", current_user=current_user.email)  # ===> Προστέθηκε το current_user στα error responses. Γιατί: η σελίδα να μην χάσει το user context σε λάθος διαδρομή.
+            return render_template('editor.html', error="Video must be an MP4, MKV, MOV, M4P, or M4V file.", current_user=current_user.email) 
 
-        safe_name = secure_filename(file.filename)  # ===> Προστέθηκε ασφαλής επεξεργασία ονόματος αρχείου. Γιατί: αποφεύγονται ασφαλιστικά/evasion θέματα και κρατιέται το αρχικό όνομα μόνο ως metadata.
+        safe_name = secure_filename(file.filename)  
         new_video = Videos(
-            title=safe_name,  # ===> Τοποθέτησε το αρχικό όνομα ως title του video στο DB. Γιατί: κρατάμε το όνομα που ανέβασε ο χρήστης για να το δείχνουμε στην εφαρμογή.
-            description=f"Uploaded by {current_user.handle}",  # ===> Προστέθηκε description με τον uploader handle. Γιατί: για να κρατάμε ποιος ανέβασε το βίντεο.
-            filename="pending",  # ===> Προστέθηκε placeholder filename που θα ενημερωθεί μετά το commit. Γιατί: το id του DB δεν υπάρχει μέχρι να δημιουργηθεί το record, άρα το final filename αποτελείται από το ID.
-            uploaded_by=current_user.id  # ===> Προστέθηκε αναφορά στον χρήστη που ανέβασε το βίντεο. Γιατί: το DB αποθηκεύει τον uploader και η σχέση παραμένει ξεκάθαρη.
+            title=safe_name,  
+            description=f"Uploaded by {current_user.handle}",  
+            filename="pending",  
+            uploaded_by=current_user.id  
         )
         db.session.add(new_video)
-        db.session.commit()  # ===> Δημιουργήθηκε το DB record πρώτα ώστε να πάρουμε το final id. Γιατί: το τελικό όνομα του αρχείου θα είναι το id του video.
+        db.session.commit()  
 
-        final_filename = f"{new_video.id}.{extension}"  # ===> Δημιουργήθηκε το τελικό όνομα βάσει του id του video και της αρχικής επέκτασης. Γιατί: αυτό είναι το ζητούμενο naming policy: κάθε video θα παίρνει όνομα το id του και την επέκταση που ανέβασε ο χρήστης.
+        final_filename = f"{new_video.id}.{extension}"  
         new_video.title = safe_name
         new_video.filename = final_filename
-        db.session.commit()  # ===> Ενημερώθηκε το record με το τελικό filename. Γιατί: το αρχείο και το DB θα μοιράζονται το ίδιο αναγνωριστικό.
-
-        file.save(os.path.join(videoUpload, final_filename))  # ===> Αποθηκεύεται το αρχείο στο static/videos με το τελικό id-based όνομα. Γιατί: έτσι το front-end θα βλέπει το βίντεο και το system θα αποθηκεύει ακριβώς αυτό το όνομα.
-        return render_template('editor.html', success="Video uploaded successfully.", current_user=current_user.email)  # ===> Προστέθηκε επιτυχές μήνυμα. Γιατί: ο χρήστης να δει ότι το upload ολοκληρώθηκε.
-    return render_template('editor.html', current_user=current_user.email)  # ===> Προστέθηκε current_user στο GET request. Για γιατί: να υπάρχει σωστό user context και να μην καταρρεύσει το template.
+        db.session.commit() 
+        file.save(os.path.join(videoUpload, final_filename))  
+        return render_template('editor.html', success="Video uploaded successfully.", current_user=current_user.email)  
+    return render_template('editor.html', current_user=current_user.email)  
 
 @app.errorhandler(404)
 def page_not_found(e):
