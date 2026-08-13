@@ -211,7 +211,7 @@ def signup():
             session["user_email"] = email
             send_verify_email(new_user)
             
-            return redirect(url_for('home'))
+            return redirect(url_for('verify'))
     return render_template('signup.html',current_user=current_user,error="")
 
 @app.route('/channel/')
@@ -287,16 +287,24 @@ def cookie_usage():
     current_user = get_current_user()
     return render_template('tos.html',current_user=current_user)
 
-
+@app.route('/verify/', methods=['GET'])
 @app.route('/auoth/v1/userToken/<string:token>/email/link/', methods=['GET'])
 def verify(token=None): 
-    print(token)
-    user = Users.query.filter_by(verification_token=token).first()
-    user.verified = True
-    user.verification_token= "Verified"
-    session["user_email"] = user.email
-    send_welcome_email(user)
-    return redirect(url_for('login'))
+    if token is not None:
+        print(token)
+        user = Users.query.filter_by(verification_token=token).first()
+        if token == user.verification_token:
+            user.verified = True
+            user.verification_token= "Verified"
+            db.session.commit()
+            session["user_email"] = user.email
+            send_welcome_email(user)
+        return redirect(url_for('login'))
+    else:
+        current_user = get_current_user()
+        mail_provider = current_user.split('@')
+        print(mail_provider[1])
+        return render_template('verify.html',current_user=current_user,mail_provider=mail_provider[1]) # make verify page in html with 2 buttons
     
 @app.route('/history/')
 def history(): 

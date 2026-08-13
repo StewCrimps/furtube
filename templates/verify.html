@@ -1,0 +1,29 @@
+{%extends 'base.html'%}
+{%block context%}
+<div style="display: flex; align-items: center; justify-content: center; height: 40vh;">
+    <!-- your content here -->
+
+    
+    <div style="text-align: center;" class="text-align-center">
+        <a href="/" class="d-block text-decoration-none text-reset">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;">
+            <img src="/static/images/orange_main_full_logo.png" alt="Furtube Logo" style="width: 300px;">
+            <h1 style="text-align: center; margin: 0;"></h1>
+        </div>
+        </a>
+        <h1>Verify your account.</h1>
+        <h4>We have sent you a verification email to {{current_user.email}} to verify your account.</h4>
+        <h6>Verify your account now to like, subscribe, and share your own videos! <br>Just a quick reminder to complete this within 7 days to avoid account deletion.</h6>
+            <br>
+        <div style="justify-content: center; display: flex; ">
+            <button class="btn btn-black" type="button" style="width: 40%; justify-content: center; display: flex;  background-color: #505050; border-radius: 10rem; color: floralwhite;"><a href="https://www.furtu.be" class="navbar-brand">I will verify later.</a></button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn btn-black" type="button" style="width: 40%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="https://www.{{mail_provider}}" class="navbar-brand">Cool! lets verify!</a></button>
+        </div>
+        <br>
+        <p>Typed the wrong email? <a href="https://www.furtu.be/settings" style="color: floralwhite;">Change it</a>.</p>
+    </div>
+
+</div>
+
+{%endblock%}
