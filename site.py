@@ -69,7 +69,7 @@ class Videos(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
-    thumpnail = db.Column(db.String)
+    thumbnail = db.Column(db.String)
     date_uploaded = db.Column(db.DateTime, default=datetime.utcnow)
     uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     filename = db.Column(db.String,unique=True,nullable=False)
@@ -209,7 +209,7 @@ def signup():
             db.session.add(new_user)  
             db.session.commit()  
             session["user_email"] = email
-            send_welcome_email(new_user)
+            send_verify_email(new_user)
             
             return redirect(url_for('home'))
     return render_template('signup.html',current_user=current_user,error="")
@@ -287,12 +287,22 @@ def cookie_usage():
     current_user = get_current_user()
     return render_template('tos.html',current_user=current_user)
 
+
+@app.route('/auoth/v1/userToken/<string:token>/email/link/', methods=['GET'])
+def verify(token=None): 
+    print(token)
+    user = Users.query.filter_by(verification_token=token).first()
+    user.verified = True
+    user.verification_token= "Verified"
+    session["user_email"] = user.email
+    send_welcome_email(user)
+    return redirect(url_for('login'))
+    
 @app.route('/history/')
 def history(): 
     current_user = get_current_user_record()
     if current_user is None:
         return redirect(url_for('login'))
-
     history_rows = UserHistory.query.filter_by(user_id=current_user.id).order_by(UserHistory.viewed_at.desc()).all()
     videos = []
     for row in history_rows:
@@ -311,6 +321,7 @@ def history():
             "date_added": time_formater(video.date_uploaded),
         })
     return render_template('history.html', videos=videos, current_user=current_user)
+
 @app.route('/channel/upload', methods=['GET', 'POST'])
 @app.route('/upload', methods=['GET', 'POST'])
 def upload(): 
@@ -320,7 +331,7 @@ def upload():
     if request.method == "POST":
         title = request.form.get("title").strip()
         description = request.form.get("description", "").strip()
-        thumbnail = request.files.get("image")
+        thumbnail = request.files.get("")
         file = request.files.get("video")
         if title == "":
             return render_template('editor.html', error="Video title is required.", current_user=current_user.email)
@@ -346,9 +357,10 @@ def upload():
 
         safe_name = secure_filename(file.filename)  
         new_video = Videos(
-            title=safe_name,  
-            description=f"Uploaded by {current_user.handle}",  
-            filename="pending",  
+            title=title,  
+            description=f"Uploaded by {current_user.handle}. {description}",  
+            filename=safe_name,
+            thumbnail=thumbnail,
             uploaded_by=current_user.id  
         )
         db.session.add(new_video)
@@ -386,31 +398,19 @@ def send_welcome_email(user):
         recipients=[user.email],
         sender=app.config['MAIL_USERNAME']
     )
-    msg.html = f'''
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 5px; background-color: #101010;">
-    <div style="background-color: #333333; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <h1 style="color: #965209; margin-bottom: 20px;">Welcome to FurTube</h1>
-        <img src="https://www.furtu.be/static/images/orange_main_full_logo.png" alt="Furtube Logo" style="width: 300px; margin:auto; display:block;">
-        <h4 style="color: #666; line-height: 1.6;">
-            Hello {user.username},<br><br>
-            You are now a member of the <b>furtu.be</b> community.<br><br>
-            In furtube you can upload all sorts of fur-y activity, your cat doing silly things, maybe a fantastic drawing of your pet, your dog chasing its tail or even your hampster running on the wheel while reaching speeds of a race car!
-            Thank you for signing up to our site!
-            <br><br> 
-            Have fun!
-            And incase you haven't read the terms of service, which you definately didn't please read the <a href="furtu.be/terms-of-service/">Terms Of Service</a>
-        </h4>
-        <p style="color: #999; font-size: 15px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-            If you did not sign-up to furtube using this e-mail contact our <a href="furtu.be/support">support</a>. Thank you.
-        </p>
-    </div>
-</div>
+    msg.html = render_template('welcome-email.html', user=user)
+    Thread(target=send_async_email, args=(app, msg)).start()
 
-    '''
+def send_verify_email(user):
+
+    msg = Message(
+        'Welcome to FurTube',
+        recipients=[user.email],
+        sender=app.config['MAIL_USERNAME']
+    )
+    msg.html = render_template('verify-email.html', user=user)
     Thread(target=send_async_email, args=(app, msg)).start()
 ####################################################################################################################################
-
-
 
 # zrok reservd key = r4ymbmvtbj2c
 
