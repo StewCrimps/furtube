@@ -255,7 +255,7 @@ def settings():
         return redirect(url_for('login'))
     active = request.args.get('tab')
     if active not in ["general","privacy","restrictions","help","account-standing"]:
-        abort(404)  
+        return redirect(url_for('settings', tab='general'))
     
     mail_provider = current_user.email.split('@')
 
@@ -316,6 +316,9 @@ def verify(token=None):
         return redirect(url_for('login'))
     else:
         current_user = get_current_user()
+        cur_user = Users.query.filter_by(email=current_user).first()
+        if cur_user.verified == True:
+            return redirect(url_for('home'))
         mail_provider = current_user.split('@')
         print(mail_provider[1])
         return render_template('verify.html',current_user=current_user,mail_provider=mail_provider[1]) # make verify page in html with 2 buttons

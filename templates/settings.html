@@ -2,14 +2,15 @@
 {%block context%}
 <br>
 <div style="display: flex; align-items: center; justify-content: center;">
-    <div style="width: 95%; max-width: 2200px; height: fit-content; background-color:#202020; border-radius: 10px;" class="settings-container">
+    <div style="width: 95%; max-width: 2200px; height: 1000px; background-color:#202020; border-radius: 10px;" class="settings-container">
         <div>
-            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 100px;">
-                    <img src="/static/images/orange_main_full_logo.png" alt="Furtube Logo" style="width: 250px;">
-                    <h1 style="font-size: 66px; vertical-align: text-bottom;">Settings<small style=" font-size: 22px; vertical-align: text-top; color: #965209;">BETA</small></h1>
-                    
-                </div>
             <ul class="list-group">
+                <a href="?tab=general" class="list-group-item">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 100px;">
+                        <img src="/static/images/orange_main_full_logo.png" alt="Furtube Logo" style="width: 250px;">
+                        <h1 style="font-size: 66px; vertical-align: text-bottom;">Settings<small style=" font-size: 22px; vertical-align: text-top; color: #965209;">BETA</small></h1>
+                    </div>
+                </a>
                 <a href="?tab=general" class="list-group-item">General</a>
                 <a href="?tab=privacy" class="list-group-item">Privacy</a>
                 <a href="?tab=restrictions" class="list-group-item">Restrictions</a>
@@ -35,9 +36,9 @@
                         </div>    
                     </div>
                     <div style="justify-content: center; display: flex; ">
-                        <div style="text-align: left; width: 60%; background-color: #f9c03d;">
+                        <div style="text-align: left; width: 60%;">
                             <h4>Basic Info:</h4>
-
+                            <br>
                             <h5>Profile picture</h5>
                             <div>
                                 <div style="justify-content: center; display: flex; ">
@@ -79,6 +80,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <br>
+                            <div>
+                                <div style="justify-content: center; display: flex; ">
+                                    <div style="justify-content: center;  width: 70%;">
+                                        <button type="submit" class="btn btn-primary btn-light" style="width: 100%;">Submit changes</button>
+                                    </div>
+                                </div>
+                            </div>
                             
 
 
@@ -98,10 +107,48 @@
                             </div>
                             <div style="justify-content: center; display: flex; ">
                                 <div style="text-align: left; width: 60%;">
+                                    <h4>Comments:</h4>
+                                    <div style="justify-content: center; display: flex; ">
+                                        <div style="justify-content: center;  width: 70%;">
+                                            <button class="btn btn-black" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Comments disabled</a></button>
+
+                                            <h6 style="color: floralwhite;">Press to change setting.</h6>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <h4>Profile type:</h4>
+                                    <div style="justify-content: center; display: flex; ">
+                                        <div style="justify-content: center;  width: 70%;">
+                                            <button class="btn btn-black" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Public account</a></button>
+
+                                            <h6 style="color: floralwhite;">Press to change account type.</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                    {% elif active == "help"%}
+                                    d
+                    {% elif active == "account-standing"%}
+                            <h2>Restrictions</h2>
+                                </div>    
+                            </div>
+                            <div style="justify-content: center; display: flex; ">
+                                <div style="text-align: left; width: 60%;">
                                     <h4>Email status:</h4>
                                     {%if current_user.verified == 1%}
                                     <h5 style="color: green;">You have verified your email.</h5>
                                     <h5 style="color: green;">You are all set. You can send commends, like and subscribe to other creators.</h5>
+                                    
+                                    <h4>Account status:</h4>
+                                    <h5 style="color: green;">All good. You can create and upload videos.</h5>
+                                    <div class="standing-demo-container">
+                                        <div style="border-radius: 10px; background-color: green; width: 100%; height: 10px;"></div>
+                                        <div style="border-radius: 10px; background-color: #505050; width: 100%; height: 10px;"></div>
+                                        <div style="border-radius: 10px; background-color: #505050; width: 100%; height: 10px;"></div>
+                                        <div style="border-radius: 10px; background-color: #505050; width: 100%; height: 10px;"></div>
+                                        <div style="border-radius: 10px; background-color: #505050; width: 100%; height: 10px;"></div> 
+                                    </div>
+                                    <br>
+                                    <h6>You will be notified if you break any rules.</h6>
                                     {%else%}
                                     
                                     <h5 style="color: red;">You haven't verified your email yet. Verify to gain full access to features.</h5>
@@ -110,11 +157,7 @@
                                     <button class="btn btn-black" type="button" style="width: 40%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="https://www.{{mail_provider}}" class="navbar-brand">Verify account</a></button>
                                     </div>
                                     {%endif%}
-                                    <h6>Lorem ipsum, dolor sit amet consecutur,</h6>
-                    {% elif active == "help"%}
-                                    d
-                    {% elif active == "account-standing"%}
-                                    e
+
                     {%endif%}
                         </form>
                     </div>
