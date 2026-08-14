@@ -248,6 +248,20 @@ def channel(handle=None):
     return render_template('channel.html', current_user=current_user, videos=channel_videos, channel_user=variable)
     # return render_template('channel.html',handle=handle)
 
+@app.route('/settings/', methods=['GET'])
+def settings():
+    current_user = get_current_user_record()
+    if current_user is None:
+        return redirect(url_for('login'))
+    active = request.args.get('tab')
+    if active not in ["general","privacy","restrictions","help","account-standing"]:
+        abort(404)  
+    
+    mail_provider = current_user.email.split('@')
+
+    return render_template('settings.html',current_user=current_user,active=active,mail_provider=mail_provider[1])
+
+
 @app.route('/search/')
 def search(): 
     current_user = get_current_user()
@@ -432,4 +446,4 @@ def send_verify_email(user):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host='192.168.1.2', port=5000)

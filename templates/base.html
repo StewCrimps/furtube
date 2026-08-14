@@ -139,6 +139,18 @@ body {
     color: #f3f3f3;
 }
 
+.settings-container {
+  display: grid;
+  grid-template-columns: 1fr 9fr;
+}
+.list-group-item {
+  background-color: #202020;
+  color: floralwhite;
+  border-color: #101010;
+  font-size: 25px;
+  text-decoration: none;
+}
+
 /* ── Profile image card ── */
 .image-container {
     position: relative;
@@ -223,6 +235,10 @@ body {
   color: #cccccc;
   opacity: 1;
 }
+
+section { display: none; }
+section:target { display: block; }
+
 
     </style>
 

@@ -1,93 +1,130 @@
 {%extends 'base.html'%}
 {%block context%}
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById("submitMode").addEventListener("click", function() {
-            let modeField = document.getElementById("modeField");
-            modeField.value = (modeField.value === "dark") ? "light" : "dark";
-        });
-    });
-</script>
+<br>
+<div style="display: flex; align-items: center; justify-content: center;">
+    <div style="width: 95%; max-width: 2200px; height: fit-content; background-color:#202020; border-radius: 10px;" class="settings-container">
+        <div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 100px;">
+                    <img src="/static/images/orange_main_full_logo.png" alt="Furtube Logo" style="width: 250px;">
+                    <h1 style="font-size: 66px; vertical-align: text-bottom;">Settings<small style=" font-size: 22px; vertical-align: text-top; color: #965209;">BETA</small></h1>
+                    
+                </div>
+            <ul class="list-group">
+                <a href="?tab=general" class="list-group-item">General</a>
+                <a href="?tab=privacy" class="list-group-item">Privacy</a>
+                <a href="?tab=restrictions" class="list-group-item">Restrictions</a>
+                <a href="?tab=help" class="list-group-item">Help</a>
+                <a href="?tab=account-standing" class="list-group-item">Account Standing</a>
+            </ul>
+        </div>
     
-    <h2 style="color: #99aab5;">Settings</h2>
-    <div class="container-fluid d-flex justify-content-center align-items-center mt-5 text-light" style="height: 50vh;">
-        <div class="card bg-dark" style="width: 50rem; color: #ccc;">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <!-- Your form goes here -->
-                        <form method="POST">
-                            {{ form.hidden_tag() }}
-                             
-                            <br>
-                            <div class="form-group">
-                                {{ form.name.label(class="form-control-label") }}
-                                {{ form.name(class="form-control", value=current_user.name) }}
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                {{ form.gender.label(class="form-control-label") }}
-                                <select class="form-control" name="gender" id="genderSelect" >
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="prefer-not-to-say">Prefer not to say</option>
-                                    <option value="croissant">Croissant</option>
-                                    <option value="other">Other</option>
-                                    
-                                </select>
-                            </div>
-                            <script>
-                                document.querySelector('select[name="gender"]').value= "{{current_user.gender}}"
-                            </script>
-                            
-                            
-                            <br>
-                            
-                            
-                            {% if mode == 'dark' %}
-                            {{ form.mode(value="light", id="modeField") }}
-                            {{ form.submitMode(class="btn btn-light", id="submitMode") }}
-                        {% else %}
-                            {{ form.mode(value="dark", id="modeField") }}
-                            {{ form.submitMode(class="btn btn-dark", id="submitMode") }}
-                        {% endif %}
-                            
-                            <br>
-                            <br>
+        <div>
+            
 
-                            {{ form.submit(class="btn btn-primary") }}
+            
+
+            <section id="general">1</section>
+
+            <div style="text-align: center;" class="text-align-center">
+                <br>
+                <div style="justify-content: center; display: flex; ">
+                    <div style="text-align: left; width: 80%;">
+                        <form action="POST">
+                    {% if active == "general"%}
+                            <h2>General</h2>
+                        </div>    
+                    </div>
+                    <div style="justify-content: center; display: flex; ">
+                        <div style="text-align: left; width: 60%; background-color: #f9c03d;">
+                            <h4>Basic Info:</h4>
+
+                            <h5>Profile picture</h5>
+                            <div>
+                                <div style="justify-content: center; display: flex; ">
+                                    <div style="justify-content: center; display: flex; width: 70%;">
+                                        <img src="/static/images/template_pfp.png" class="card-img-top rounded-circle" style="height: 150px; width: 150px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <h5>Username</h5>
+                                <div style="justify-content: center; display: flex; ">
+                                    <div style="justify-content: center; display: flex; width: 70%;">
+                                        <input type="text" name="handle" value="{{current_user.username}}" placeholder="Make a memorable username" class="form-control">
+                                    </div>
+                                </div>
+                            <h5>Handle</h5>
+                            <div>
+                                <div style="justify-content: center; display: flex; ">
+                                    <div style="justify-content: center;  width: 70%;">
+                                        <input type="text" disabled name="handle" value="{{current_user.handle}}" placeholder="Create a unique handle" class="form-control">
+                                        <small>To change your handle you need to contuct <a href="?tab=help" style="color: floralwhite;">support</a>.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5>Email address</h5>
+                            <div>
+                                <div style="justify-content: center; display: flex; ">
+                                    <div style="justify-content: center; display: flex; width: 70%;">
+                                        <input type="text" name="handle" value="{{current_user.email}}" placeholder="Insert a valid email" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <h5>Password</h5>
+                            <div>
+                                <div style="justify-content: center; display: flex; ">
+                                    <div style="justify-content: center;  width: 70%;">
+                                        <input type="password" value="{{current_user.password}}" placeholder="Insert an unbreakable password." autocomplete="current-password" id="password" name="password" class="form-control">
+                                        <br>
+                                        <input type="password" value="{{current_user.password}}" placeholder="Re-enter that unbreakable password." autocomplete="current-password" id="password2" name="password" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+
+                            
+                    {% elif active == "privacy"%}
+                            <h2>Privacy</h2>
+                            </div>    
+                        </div>
+                        <div style="justify-content: center; display: flex; ">
+                            <div style="text-align: left; width: 60%; background-color: #f9c03d;">
+                                <h4>Some test text</h4>
+                                <button class="btn btn-black" type="button" style="width: 40%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Context</a></button>
+                                <h6>Lorem ipsum, dolor sit amet consecutur,</h6>
+                    {% elif active == "restrictions"%}
+                            <h2>Restrictions</h2>
+                                </div>    
+                            </div>
+                            <div style="justify-content: center; display: flex; ">
+                                <div style="text-align: left; width: 60%;">
+                                    <h4>Email status:</h4>
+                                    {%if current_user.verified == 1%}
+                                    <h5 style="color: green;">You have verified your email.</h5>
+                                    <h5 style="color: green;">You are all set. You can send commends, like and subscribe to other creators.</h5>
+                                    {%else%}
+                                    
+                                    <h5 style="color: red;">You haven't verified your email yet. Verify to gain full access to features.</h5>
+                                        <h6 style="text-align: center;"> Users have 7 days to verify thier account. If they don't thier account gets deleted.</h6>
+                                    <div style="justify-content: center; display: flex; ">
+                                    <button class="btn btn-black" type="button" style="width: 40%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="https://www.{{mail_provider}}" class="navbar-brand">Verify account</a></button>
+                                    </div>
+                                    {%endif%}
+                                    <h6>Lorem ipsum, dolor sit amet consecutur,</h6>
+                    {% elif active == "help"%}
+                                    d
+                    {% elif active == "account-standing"%}
+                                    e
+                    {%endif%}
                         </form>
                     </div>
-                    <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload_image') }}" class="col-md-6 d-flex justify-content-center align-items-center">
-                        {{ form.hidden_tag() }}
-    
-                        <div class="text-center">
-                            <!-- Hidden file input -->
-                            <input type="file" id="fileInput" style="display: none;" name="profile_image">
-                            <img src="{{ url_for('static', filename='pimages/' + current_user.image) }}" alt="" class="img-fluid rounded-circle w-50" id="profileImage">
-                            <div class="align-items-center" style="border: 1px solid #99aab5; border-radius: 15px; margin-top: 10px;">
-                                &nbsp;&nbsp;&nbsp;{{ current_user.email }} &nbsp;&nbsp;&nbsp;
-                            </div>
-                           
-                        </div>
-                    </form>
                 </div>
+                <br>
             </div>
         </div>
     </div>
-    
-    <script>
 
-
-
-
-        document.getElementById('profileImage').addEventListener('click', function() {
-            document.getElementById('fileInput').click();
-        });
-    
-        document.getElementById('fileInput').addEventListener('change', function() {
-            this.form.submit();
-        });
-    </script>
-    
+</div>
+<br>
+&nbsp; &nbsp; &nbsp;
 {%endblock%}
