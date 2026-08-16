@@ -104,7 +104,7 @@ def get_current_user():
     q = Users.query.filter_by(email=email).first()
     # q = "1@1.com"
     if q:
-        return email, 
+        return Users.query.filter_by(email=email).first() # email
     else:
         return None
 
@@ -366,26 +366,26 @@ def upload():
         thumbnail = request.files.get("")
         file = request.files.get("video")
         if title == "":
-            return render_template('editor.html', error="Video title is required.", current_user=current_user.email)
+            return render_template('editor.html', error="Video title is required.", current_user=current_user)
         if description == "":
-            return render_template('editor.html', error="Video description is required.", current_user=current_user.email)
+            return render_template('editor.html', error="Video description is required.", current_user=current_user)
         if thumbnail is None or thumbnail.filename == "":
-            return render_template('editor.html', error="Thumbnail file is required.", current_user=current_user.email)
+            return render_template('editor.html', error="Thumbnail file is required.", current_user=current_user)
         if file is None or file.filename == "":
-            return render_template('editor.html', error="Video file is required.", current_user=current_user.email)
+            return render_template('editor.html', error="Video file is required.", current_user=current_user)
         if "." not in thumbnail.filename:
-            return render_template('editor.html', error="Invalid thumbnail file format.", current_user=current_user.email)
+            return render_template('editor.html', error="Invalid thumbnail file format.", current_user=current_user)
         thumbnail_extension = thumbnail.filename.rsplit(".", 1)[1].lower()
         if thumbnail_extension not in ["png", "jpg", "webp", "jpeg"]:
-            return render_template('editor.html', error="Thumbnail must be a PNG, JPG, JPEG, or WEBP file.", current_user=current_user.email)
+            return render_template('editor.html', error="Thumbnail must be a PNG, JPG, JPEG, or WEBP file.", current_user=current_user)
         if file.filename == "":
-            return render_template('editor.html', error="Import a file.", current_user=current_user.email)  
+            return render_template('editor.html', error="Import a file.", current_user=current_user)  
         if "." not in file.filename:
-            return render_template('editor.html', error="Invalid video file format.", current_user=current_user.email)  
+            return render_template('editor.html', error="Invalid video file format.", current_user=current_user)  
         extension = file.filename.rsplit(".", 1)[1].lower()
         print(file, extension)
         if extension not in allowedFormats:
-            return render_template('editor.html', error="Video must be an MP4, MKV, MOV, M4P, or M4V file.", current_user=current_user.email) 
+            return render_template('editor.html', error="Video must be an MP4, MKV, MOV, M4P, or M4V file.", current_user=current_user) 
 
         safe_name = secure_filename(file.filename)  
         new_video = Videos(
@@ -403,8 +403,8 @@ def upload():
         new_video.filename = final_filename
         db.session.commit() 
         file.save(os.path.join(videoUpload, final_filename))  
-        return render_template('editor.html', success="Video uploaded successfully.", current_user=current_user.email)  
-    return render_template('editor.html', current_user=current_user.email)  
+        return render_template('editor.html', success="Video uploaded successfully.", current_user=current_user)  
+    return render_template('editor.html', current_user=current_user)  
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -444,7 +444,7 @@ def send_verify_email(user):
     Thread(target=send_async_email, args=(app, msg)).start()
 ####################################################################################################################################
 
-# zrok reservd key = r4ymbmvtbj2c
+
 
 
 
@@ -457,3 +457,4 @@ def send_verify_email(user):
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+# zrok reservd key = r4ymbmvtbj2c

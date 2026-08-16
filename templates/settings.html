@@ -97,19 +97,25 @@
                         <div style="justify-content: center; display: flex; ">
                             <div style="text-align: left; width: 60%;">
                                 <h4>Sessions</h4>
+                                <br>
                                 <h5>All sessions</h5>
-                                <ul class="list-group" >
-                                    <li class="list-group-item" style="font-size: medium;"><img src="/static/images/device.png" style="width: 20px; height: 20px;" alt="">&nbsp; 123.24.12.0.1 <a href="/logout/?device={{ip}}"><img src="/static/images/logout.png" style="width: 25px; height: 25px; background-color: red; border-radius: 3px;"></a></li>
-                                    <li class="list-group-item" style="font-size: medium;"><img src="/static/images/device.png" style="width: 20px; height: 20px;" alt="">&nbsp; 312.45.85.1.5 <a href="/logout/?device={{ip}}"><img src="/static/images/logout.png" style="width: 25px; height: 25px; background-color: red; border-radius: 3px;"></a></li>
-                                    <li class="list-group-item" style="font-size: medium;"><img src="/static/images/device.png" style="width: 20px; height: 20px;" alt="">&nbsp; 321.97.12.6.1 <a href="/logout/?device={{ip}}"><img src="/static/images/logout.png" style="width: 25px; height: 25px; background-color: red; border-radius: 3px;"></a></li>
-
-                                </ul>
+                                <div style="justify-content: center; display: flex; "> 
+                                    <div style="width: 75%;">
+                                        <ul class="list-group" >
+                                        <li class="list-group-item" style="font-size: medium;"><img src="/static/images/device.png" style="width: 20px; height: 20px;" alt="">&nbsp; 123.24.12.0.1 <a href="/logout/?device={{ip}}"><img src="/static/images/logout.png" style="width: 25px; height: 25px; background-color: red; border-radius: 3px;"></a></li>
+                                        <li class="list-group-item" style="font-size: medium;"><img src="/static/images/device.png" style="width: 20px; height: 20px;" alt="">&nbsp; 312.45.85.1.5 <a href="/logout/?device={{ip}}"><img src="/static/images/logout.png" style="width: 25px; height: 25px; background-color: red; border-radius: 3px;"></a></li>
+                                        <li class="list-group-item" style="font-size: medium;"><img src="/static/images/device.png" style="width: 20px; height: 20px;" alt="">&nbsp; 321.97.12.6.1 <a href="/logout/?device={{ip}}"><img src="/static/images/logout.png" style="width: 25px; height: 25px; background-color: red; border-radius: 3px;"></a></li>
+                                    </ul>
+                                    </div>
+                                    
+                                </div>
                                 <h5>Logout of all sessions</h5>
+                                <div style="justify-content: center; display: flex; ">
                                 <div style="justify-content: center;  width: 70%;">
-                                            <button class="btn btn-black setting-input" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Log out</a></button>
-
-                                            <h6 style="color: floralwhite;">Includes this session.</h6>
-                                        </div>
+                                        <button class="btn btn-black setting-input" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Log out</a></button>
+                                        <h6 style="color: floralwhite;">Includes this session.</h6>
+                                    </div>
+                                </div>
                                 <br>
                                 <br>
                                 <br>
@@ -122,12 +128,14 @@
                                 <br>
                                 <br>
                                 <h4>Danger Zone</h5>
+                                <br>
                                 <h5>Delete account</h5>
-                                <div style="justify-content: center;  width: 70%;">
-                                    <button class="btn btn-black setting-input" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: red; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Delete Account</a></button>
-
-                                    <h6 style="color: floralwhite;">All data gets deleted. This action is not reversable.</h6>
+                                <div style="justify-content: center; display: flex; ">
+                                    <div style="justify-content: center;  width: 70%;">
+                                        <button class="btn btn-black setting-input" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: red; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Delete Account</a></button> <!-- #web pressed a pupup opens and asks for profile handle and password then redirects to /settings/d-account and in python it q the data from db with the data from popup. if they are identicall then db wipes that user. -->
+                                        <h6 style="color: floralwhite;">All data gets deleted. This action is not reversable.</h6>
                                     </div>
+                                </div>
                     {% elif active == "limitations"%}
                             <h2>My Limits</h2>
                                 </div>    
