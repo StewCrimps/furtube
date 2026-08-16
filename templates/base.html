@@ -139,9 +139,13 @@ body {
     color: #f3f3f3;
 }
 
+.setting-input{
+  min-width: 150px;
+}
+
 .settings-container {
   display: grid;
-  grid-template-columns: 1fr 9fr;
+  grid-template-columns: minmax(100px, 1fr) 8fr;
 }
 .standing-demo-container {
   display: grid;
@@ -150,9 +154,9 @@ body {
 }
 
 .list-group-item {
-  background-color: #202020;
+  background-color: #000000;
   color: floralwhite;
-  border-color: #101010;
+  border-color: #000000;
   font-size: 25px;
   text-decoration: none;
 }
@@ -283,13 +287,15 @@ section:target { display: block; }
          aria-expanded="false">
         <img src="/static/images/template_pfp.png" style="height: 40px; width: 40; margin-right: 10px;" class="rounded-circle" alt="Channel" onerror="this.style.display='none'">
       </a>
-      <ul class="dropdown-menu dropdown-menu-end"
-          style="background-color: #000000;"
-          aria-labelledby="navbarDropdown">
-        <li><a class="dropdown-item text-white" href="/channel/">Channel</a></li>
-        <li><a class="dropdown-item text-white" href="/settings/">Settings</a></li>
+      <ul class="dropdown-menu dropdown-menu-end" style="background-color: #000000; width: 200px; text-align: left;" aria-labelledby="navbarDropdown">
+        <li class=" text-white"><img src="/static/images/template_pfp.png" class="rounded-circle" style="height: 40px; width: 40; margin-right: 10px;" alt="">{{current_user.username}}</li>
+        <li class=" text-white" style="width: 68%; text-align: right;">@{{current_user.handle}}</li>
         <li><hr class="dropdown-divider border-dark"></li>
-        <li><a class="dropdown-item text-white" href="/logout">Log Out</a></li>
+        <li><a class="dropdown-item text-white" href="/channel/">View Channel</a></li>
+        <li><a class="dropdown-item text-white" href="/settings/">Settings</a></li>
+        <li><a class="dropdown-item text-white" href="/settings/?tab=help">Help</a></li>
+        <li><hr class="dropdown-divider border-dark"></li>
+        <li><a class="dropdown-item " style="color: red;" href="/logout">Log Out</a></li>
       </ul>
     {%endif%}
     </div>
@@ -357,7 +363,7 @@ section:target { display: block; }
     </button>
     </a>
     <!-- 3 -->
-    <a class="navbar-brand" href="/your-videos/">
+    <a class="navbar-brand" href="/channel#videos/">
     <button type="button" class="btn btn-black" style="width: 100%; display: flex; align-items: center;">
       <img src="/static/images/new_your_videos.png" style="height: 30px; margin-right: 8px;" alt="Playlists">
       <span style="flex: 1; text-align: left;">Your Videos</span>

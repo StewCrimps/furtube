@@ -2,24 +2,22 @@
 {%block context%}
 <br>
 <div style="display: flex; align-items: center; justify-content: center;">
-    <div style="width: 95%; max-width: 2200px; height: 1000px; background-color:#202020; border-radius: 10px;" class="settings-container">
-        <div>
+    <div style="width: 100%; max-width: 2200px; height: 100%; min-height: 1100px; background-color:#000000; border-radius: 10px;" class="settings-container">
+
+        <div style="min-width: 30px;">
             <ul class="list-group">
                 <a href="?tab=general" class="list-group-item">
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 100px;">
-                        <img src="/static/images/orange_main_full_logo.png" alt="Furtube Logo" style="width: 250px;">
-                        <h1 style="font-size: 66px; vertical-align: text-bottom;">Settings<small style=" font-size: 22px; vertical-align: text-top; color: #965209;">BETA</small></h1>
-                    </div>
+                    <h1 style="vertical-align: text-bottom;">Settings<small style=" font-size: 15px; vertical-align: text-top; color: #965209;">BETA</small></h1>
                 </a>
                 <a href="?tab=general" class="list-group-item">General</a>
-                <a href="?tab=privacy" class="list-group-item">Privacy</a>
-                <a href="?tab=restrictions" class="list-group-item">Restrictions</a>
+                <a href="?tab=security" class="list-group-item">Security</a>
+                <a href="?tab=limitations" class="list-group-item">My Limits</a>
                 <a href="?tab=help" class="list-group-item">Help</a>
                 <a href="?tab=account-standing" class="list-group-item">Account Standing</a>
             </ul>
         </div>
     
-        <div>
+        <div style="min-width: 320px;">
             
 
             
@@ -50,14 +48,14 @@
                             <h5>Username</h5>
                                 <div style="justify-content: center; display: flex; ">
                                     <div style="justify-content: center; display: flex; width: 70%;">
-                                        <input type="text" name="handle" value="{{current_user.username}}" placeholder="Make a memorable username" class="form-control">
+                                        <input type="text" name="handle" value="{{current_user.username}}" placeholder="Make a memorable username" class="form-control setting-input">
                                     </div>
                                 </div>
                             <h5>Handle</h5>
                             <div>
                                 <div style="justify-content: center; display: flex; ">
                                     <div style="justify-content: center;  width: 70%;">
-                                        <input type="text" disabled name="handle" value="{{current_user.handle}}" placeholder="Create a unique handle" class="form-control">
+                                        <input type="text" disabled name="handle" value="{{current_user.handle}}" placeholder="Create a unique handle" class="form-control setting-input">
                                         <small>To change your handle you need to contuct <a href="?tab=help" style="color: floralwhite;">support</a>.</small>
                                     </div>
                                 </div>
@@ -66,7 +64,7 @@
                             <div>
                                 <div style="justify-content: center; display: flex; ">
                                     <div style="justify-content: center; display: flex; width: 70%;">
-                                        <input type="text" name="handle" value="{{current_user.email}}" placeholder="Insert a valid email" class="form-control">
+                                        <input type="text" name="handle" value="{{current_user.email}}" placeholder="Insert a valid email" class="form-control setting-input">
                                     </div>
                                 </div>
                             </div>
@@ -74,9 +72,9 @@
                             <div>
                                 <div style="justify-content: center; display: flex; ">
                                     <div style="justify-content: center;  width: 70%;">
-                                        <input type="password" value="{{current_user.password}}" placeholder="Insert an unbreakable password." autocomplete="current-password" id="password" name="password" class="form-control">
+                                        <input type="password" value="{{current_user.password}}" placeholder="Insert an unbreakable password." autocomplete="current-password" id="password" name="password" class="form-control setting-input">
                                         <br>
-                                        <input type="password" value="{{current_user.password}}" placeholder="Re-enter that unbreakable password." autocomplete="current-password" id="password2" name="password" class="form-control">
+                                        <input type="password" value="{{current_user.password}}" placeholder="Re-enter that unbreakable password." autocomplete="current-password" id="password2" name="password" class="form-control setting-input">
                                     </div>
                                 </div>
                             </div>
@@ -84,7 +82,7 @@
                             <div>
                                 <div style="justify-content: center; display: flex; ">
                                     <div style="justify-content: center;  width: 70%;">
-                                        <button type="submit" class="btn btn-primary btn-light" style="width: 100%;">Submit changes</button>
+                                        <button type="submit" class="btn btn-primary btn-light setting-input" style="width: 100%;">Submit changes</button>
                                     </div>
                                 </div>
                             </div>
@@ -92,17 +90,46 @@
 
 
                             
-                    {% elif active == "privacy"%}
-                            <h2>Privacy</h2>
+                    {% elif active == "security"%}
+                            <h2>Security</h2>
                             </div>    
                         </div>
                         <div style="justify-content: center; display: flex; ">
-                            <div style="text-align: left; width: 60%; background-color: #f9c03d;">
-                                <h4>Some test text</h4>
-                                <button class="btn btn-black" type="button" style="width: 40%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Context</a></button>
-                                <h6>Lorem ipsum, dolor sit amet consecutur,</h6>
-                    {% elif active == "restrictions"%}
-                            <h2>Restrictions</h2>
+                            <div style="text-align: left; width: 60%;">
+                                <h4>Sessions</h4>
+                                <h5>All sessions</h5>
+                                <ul class="list-group" >
+                                    <li class="list-group-item" style="font-size: medium;"><img src="/static/images/device.png" style="width: 20px; height: 20px;" alt="">&nbsp; 123.24.12.0.1 <a href="/logout/?device={{ip}}"><img src="/static/images/logout.png" style="width: 25px; height: 25px; background-color: red; border-radius: 3px;"></a></li>
+                                    <li class="list-group-item" style="font-size: medium;"><img src="/static/images/device.png" style="width: 20px; height: 20px;" alt="">&nbsp; 312.45.85.1.5 <a href="/logout/?device={{ip}}"><img src="/static/images/logout.png" style="width: 25px; height: 25px; background-color: red; border-radius: 3px;"></a></li>
+                                    <li class="list-group-item" style="font-size: medium;"><img src="/static/images/device.png" style="width: 20px; height: 20px;" alt="">&nbsp; 321.97.12.6.1 <a href="/logout/?device={{ip}}"><img src="/static/images/logout.png" style="width: 25px; height: 25px; background-color: red; border-radius: 3px;"></a></li>
+
+                                </ul>
+                                <h5>Logout of all sessions</h5>
+                                <div style="justify-content: center;  width: 70%;">
+                                            <button class="btn btn-black setting-input" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Log out</a></button>
+
+                                            <h6 style="color: floralwhite;">Includes this session.</h6>
+                                        </div>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <h4>Danger Zone</h5>
+                                <h5>Delete account</h5>
+                                <div style="justify-content: center;  width: 70%;">
+                                    <button class="btn btn-black setting-input" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: red; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Delete Account</a></button>
+
+                                    <h6 style="color: floralwhite;">All data gets deleted. This action is not reversable.</h6>
+                                    </div>
+                    {% elif active == "limitations"%}
+                            <h2>My Limits</h2>
                                 </div>    
                             </div>
                             <div style="justify-content: center; display: flex; ">
@@ -110,7 +137,7 @@
                                     <h4>Comments:</h4>
                                     <div style="justify-content: center; display: flex; ">
                                         <div style="justify-content: center;  width: 70%;">
-                                            <button class="btn btn-black" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Comments disabled</a></button>
+                                            <button class="btn btn-black setting-input" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Comments disabled</a></button>
 
                                             <h6 style="color: floralwhite;">Press to change setting.</h6>
                                         </div>
@@ -119,7 +146,7 @@
                                     <h4>Profile type:</h4>
                                     <div style="justify-content: center; display: flex; ">
                                         <div style="justify-content: center;  width: 70%;">
-                                            <button class="btn btn-black" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Public account</a></button>
+                                            <button class="btn btn-black setting-input" type="button" style="width: 80%; justify-content: center; display: flex;  background-color: #965209; border-radius: 10rem; color: floralwhite;"><a href="" class="navbar-brand">Public account</a></button>
 
                                             <h6 style="color: floralwhite;">Press to change account type.</h6>
                                         </div>

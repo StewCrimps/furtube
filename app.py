@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, abort, session, redirect,url_for
+from flask import Flask, render_template, request, abort, session, redirect,url_for,request
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from threading import Thread
@@ -94,13 +94,17 @@ class UserHistory(db.Model):
 with app.app_context():
     db.create_all()
 
+def get_ip():
+    return request.remote_addr
+
 def get_current_user():
     email = session.get("user_email")
     print(email)
+    print(get_ip())
     q = Users.query.filter_by(email=email).first()
     # q = "1@1.com"
     if q:
-        return email
+        return email, 
     else:
         return None
 
@@ -162,9 +166,12 @@ def login():
             return render_template('login.html', error="Please check your credentials.",current_user=current_user)
     return render_template('login.html',current_user=current_user)
 
-@app.route('/logout/')
-def logout(): 
-    session.clear()
+@app.route('/logout/<string:id>')
+def logout(id=None): 
+    if id == "all-sessions":
+        session.clear() # Tha mazevontai ola ta IPs sto sql kai tha bgasei osa den teriazoun me to current, tha fenontai k poia eina sindedemena sto setting?tab=securityz
+    else:
+        session.clear()
     return redirect (url_for("home"))
 
 # Route for the signup page
@@ -254,7 +261,7 @@ def settings():
     if current_user is None:
         return redirect(url_for('login'))
     active = request.args.get('tab')
-    if active not in ["general","privacy","restrictions","help","account-standing"]:
+    if active not in ["general","security","limitations","help","account-standing"]:
         return redirect(url_for('settings', tab='general'))
     
     mail_provider = current_user.email.split('@')
