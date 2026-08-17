@@ -64,6 +64,7 @@ class Users(db.Model):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     verified = db.Column(db.Boolean,default=False,nullable=False)
     verification_token = db.Column(db.String(200),unique=True,nullable=True)
+    connected_devices = db.Column(db.String,default="")
 
 class Videos(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -104,15 +105,24 @@ def get_current_user():
     q = Users.query.filter_by(email=email).first()
     # q = "1@1.com"
     if q:
-        return Users.query.filter_by(email=email).first() # email
+        user = Users.query.filter_by(email=email).first()
+        userIps = user.connected_devices.split(",")
+        print(userIps)
+        for i in userIps:
+            if i == get_ip():
+                return user
+                print("aouth", i)
+        return redirect(url_for('logout'))
+        print("Disconet")
+         # email
     else:
         return None
 
-def get_current_user_record():
-    email = session.get("user_email")                         
-    if not email:
-        return None
-    return Users.query.filter_by(email=email).first()
+def auth_ip(current_user):
+    if current_user.connected_devices == "":
+        current_user.connected_devices = get_ip()
+    else:
+        current_user.connected_devices = current_user.connected_devices + "," + get_ip()
 
 
 def record_user_history(user_id, video_id):
@@ -155,10 +165,14 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        
         user = Users.query.filter_by(email=email).first()
         if user and user.password == password:
             if user.verified:
+                auth_ip(user)
+                db.session.commit()
                 session["user_email"] = email
+                
                 return redirect(url_for('home'))
             else:
                 return render_template('login.html', error="Verify your account via email.",current_user=current_user)
@@ -211,20 +225,24 @@ def signup():
                             handle = handle,
                             profile_image = "profile.png",
                             verified = False,
-                            verification_token = str(uuid.uuid4())
+                            verification_token = str(uuid.uuid4()),
+                            connected_devices = get_ip(),
                             )
             db.session.add(new_user)  
             db.session.commit()  
             session["user_email"] = email
+            current_user = get_current_user()
+            db.session.commit()
             send_verify_email(new_user)
             
             return redirect(url_for('verify'))
-    return render_template('signup.html',current_user=current_user,error="")
+    return render_template('signup.html',current_user=current_user)
+
 
 @app.route('/channel/')
 @app.route('/channel/@<string:handle>', methods=['GET'])
 def channel(handle=None):
-    current_user = get_current_user_record()
+    current_user = get_current_user()
     if current_user is None:
         return redirect(url_for('login'))
     if handle == None:
@@ -257,7 +275,7 @@ def channel(handle=None):
 
 @app.route('/settings/', methods=['GET'])
 def settings():
-    current_user = get_current_user_record()
+    current_user = get_current_user()
     if current_user is None:
         return redirect(url_for('login'))
     active = request.args.get('tab')
@@ -278,7 +296,7 @@ def search():
 # Route for the dashboard page
 @app.route('/watch/<string:id>', methods=['GET'])
 def watch(id=None):
-    current_user = get_current_user_record()
+    current_user = get_current_user()
     videoid = id
 
     video = None
@@ -312,27 +330,33 @@ def cookie_usage():
 @app.route('/auoth/v1/userToken/<string:token>/email/link/', methods=['GET'])
 def verify(token=None): 
     if token is not None:
-        print(token)
+        print("11111111111111111111111111111111111111111111111")
         user = Users.query.filter_by(verification_token=token).first()
-        if token == user.verification_token:
-            user.verified = True
-            user.verification_token= "Verified"
-            db.session.commit()
-            session["user_email"] = user.email
-            send_welcome_email(user)
-        return redirect(url_for('login'))
+        print(user)
+        if user == None:
+            print("====")
+            return redirect(url_for("home"))
+        else:
+            if token == str(user.verification_token):
+                user.verified = True
+                user.verification_token = str(uuid.uuid4())
+                auth_ip(current_user)
+                db.session.commit()
+                session["user_email"] = user.email
+                send_welcome_email(user)
+            return redirect(url_for('login'))
     else:
         current_user = get_current_user()
-        cur_user = Users.query.filter_by(email=current_user).first()
-        if cur_user.verified == True:
+        cur_user = Users.query.filter_by(email=current_user.email).first()
+        if current_user.verified == True:
             return redirect(url_for('home'))
-        mail_provider = current_user.split('@')
+        mail_provider = current_user.email.split('@')
         print(mail_provider[1])
         return render_template('verify.html',current_user=current_user,mail_provider=mail_provider[1]) # make verify page in html with 2 buttons
     
 @app.route('/history/')
 def history(): 
-    current_user = get_current_user_record()
+    current_user = get_current_user()
     if current_user is None:
         return redirect(url_for('login'))
     history_rows = UserHistory.query.filter_by(user_id=current_user.id).order_by(UserHistory.viewed_at.desc()).all()
@@ -357,7 +381,7 @@ def history():
 @app.route('/channel/upload', methods=['GET', 'POST'])
 @app.route('/upload', methods=['GET', 'POST'])
 def upload(): 
-    current_user = get_current_user_record()  
+    current_user = get_current_user()  
     if current_user is None:
         return redirect(url_for("login"))  
     if request.method == "POST":
@@ -456,5 +480,5 @@ def send_verify_email(user):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='192.168.1.2', port=5000)
+    app.run(debug=False, host='192.168.1.2', port=5000)
 # zrok reservd key = r4ymbmvtbj2c

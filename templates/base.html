@@ -276,7 +276,7 @@ section:target { display: block; }
 
     
     <div class="dropdown ms-auto flex-shrink-0">
-    {% if current_user == None %}
+    {% if current_user is none %}
       <a class="dropdown-item text-white" href="/login/">Login</a>
     {%else%}
       <a class="nav-link dropdown-toggle p-0"
