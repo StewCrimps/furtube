@@ -480,5 +480,4 @@ def send_verify_email(user):
 
 
 if __name__ == '__main__':
-    app.run(debug=False, host='192.168.1.2', port=5000)
-# zrok reservd key = r4ymbmvtbj2c
+    app.run(debug=False, port=5000)
